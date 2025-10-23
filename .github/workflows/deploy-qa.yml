@@ -20,7 +20,7 @@ jobs:
  
     - name: Install MBT (Multi-Target Application Build Tool)
       run: |
-        npm install -g @sap/cds-mta
+        npm install -g mbt
  
     - name: Build MTA project
       run: |
