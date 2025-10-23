@@ -24,7 +24,7 @@ jobs:
     - name: Setup Cloud Foundry for QA
       uses: cap-js/cf-setup@main
       with:
-        cf-version: 'latest'
+        cf-version: "8.14.1"
         cf-api: ${{ secrets.CF_API }}
         cf-org: ${{ secrets.CF_ORG }}
         cf-space: ${{ secrets.CF_SPACE }}
