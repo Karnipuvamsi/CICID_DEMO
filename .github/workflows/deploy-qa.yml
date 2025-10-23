@@ -1,0 +1,42 @@
+name: Deploy CAP to QA
+ 
+on:
+  push:
+    branches:
+      - qa
+ 
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+ 
+    steps:
+    # 1. Checkout the repository
+    - name: Checkout code
+      uses: actions/checkout@v3
+ 
+    # 2. Set up Node.js 22
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '22'
+ 
+    # 3. Setup Cloud Foundry & MBT
+    - name: Setup Cloud Foundry for QA
+      uses: cap-js/cf-setup@main
+      with:
+        cf-version: "8.14.1"
+        cf-api: ${{ secrets.CF_API }}
+        cf-org: ${{ secrets.CF_ORG }}
+        cf-space: ${{ secrets.CF_SPACE }}
+        cf-username: ${{ secrets.CF_USERNAME }}
+        cf-password: ${{ secrets.CF_PASSWORD }}
+ 
+    # 4. Build the MTA project
+    - name: Build MTA project
+      run: mbt build
+ 
+    # 5. Deploy MTA archive to QA
+    - name: Deploy MTA to QA
+      run: |
+        cf deploy mta_archives/*.mtar -f
+ 
