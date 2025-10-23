@@ -38,5 +38,5 @@ jobs:
     # 5. Deploy MTA archive to QA
     - name: Deploy MTA to QA
       run: |
-        cf deploy mta_archives/*.mtar --abort-ongoing -f
+        cf deploy mta_archives/*.mtar -f
  
