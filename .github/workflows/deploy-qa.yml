@@ -1,0 +1,46 @@
+name: Deploy CAP to QA
+ 
+on:
+  push:
+    branches:
+      - qa
+ 
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+ 
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+ 
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+ 
+    - name: Install MBT (Multi-Target Application Build Tool)
+      run: |
+        npm install -g @sap/cds-mta
+ 
+    - name: Build MTA project
+      run: |
+        mbt build
+ 
+    - name: Install Cloud Foundry CLI
+      run: |
+        wget -q "https://packages.cloudfoundry.org/stable?release=linux64-binary&source=github" -O cf-cli.tgz
+        tar -xvf cf-cli.tgz
+        sudo mv cf /usr/local/bin/
+ 
+    - name: Login to Cloud Foundry
+      run: |
+        cf login -a ${{ secrets.CF_API }} \
+                 -u ${{ secrets.CF_USERNAME }} \
+                 -p ${{ secrets.CF_PASSWORD }} \
+                 -o ${{ secrets.CF_ORG }} \
+                 -s ${{ secrets.CF_SPACE }}
+ 
+    - name: Deploy MTA to QA
+      run: |
+        cf deploy mta_archives/*.mtar
+ 
